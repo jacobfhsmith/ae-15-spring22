@@ -1,0 +1,155 @@
+---
+title: 'AE 15: Hypothesis tests for independence'
+author: "STA 199"
+date: "03/01/2022"
+---
+
+```{r load-packages, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(tidymodels)
+```
+
+```{r load-data, message=FALSE, warning=FALSE}
+yawn <- read_csv("yawn.csv")
+```
+
+# Learning goals
+
+Use and understand simulation-based methods to ...
+
+- test a claim about a population proportion
+- test a claim about independence between two groups
+
+## Different options inside generate
+
+- Discussion of bootstrap, draw, and permute [here](https://infer.netlify.app/reference/generate.html).
+
+  - Bootstrap: with replacement, for confidence intervals or for a single mean.
+  
+  - Draw: only for hypothesis testing for one proportion.
+  
+  - Permute: "shuffles" the data without replacement- see explanation [here](https://thomasleeper.com/Rcourse/Tutorials/permutationtests.html). You might use this for a difference in means or to test for independence (diff in props).
+
+If you want to double check, I would recommend checking the [vignette here](https://cran.r-project.org/web/packages/infer/vignettes/observed_stat_examples.html#one-categorical-one-proportion-1). This is not an exhaustive list, just some common ones we use in this course.
+
+# Part 1: Hypothesis test for a single proportion[^1]
+
+A large university knows that about 70% of the full-time students are employed at least 5 hours per week. The members of the Statistics Department wonder if the same proportion of their students work at least 5 hours per week. They randomly sample 25 majors and find that 15 of the students work 5 or more hours each week. Use the code below to create a data frame of the results.
+
+```{r create-df}
+stats_work <- tibble(work_hours = c(rep("At least 5", 15), 
+                               rep("Less than 5", 10)))
+```
+
+- State the null and alternative hypotheses. 
+
+- Fill in the code to generate the null distribution. 
+
+```{r prop-null}
+set.seed(101821)
+#null_dist <- ____ %>%
+#  specify(response = ____, success = "_____") %>%
+#  hypothesize(null = "point", p = ____) %>%
+#  generate(reps = 100, type = "draw") %>%
+#  calculate(stat = "prop")
+```
+
+- Visualize the null distribution and shade in the area used to calculate the p-value. 
+
+```{r prop-null-viz}
+# add code 
+```
+
+**Note, the odd asymmetry we seem to be getting around 0.7 seems to be a result of the seed we are using.**
+
+- Calculate the p-value. Then use the p-value to make your conclusion using a significance level of 0.05.
+
+```{r prop-calc-p-value}
+# add code
+```
+
+## Part 2: Test for independence
+
+- First let's, watch the experiment from *Mythbusters* here [https://www.youtube.com/watch?v=mrr_UjNLbhE].
+
+- Let $t$ be the treatment group who saw a person yawn, $c$ be the control group who did not see anyone yawn,a nd $p$ be the proportion of people who yawned. 
+
+## Exercise 1
+
+We want to use simulation-based inference to assess whether or not yawning and seeing someone yawn are independent. 
+
+- State the null and alternative hypotheses in words: 
+
+- Select the appropriate null and alternative hypotheses written in mathematical notation: 
+
+a. $H_0: p_t = p_c \text{ vs. }H_a: p_t < p_c$
+b. $H_0: p_t = p_c \text{ vs. }H_a: p_t > p_c$
+c. $H_0: p_t = p_c \text{ vs. }H_a: p_t \neq p_c$
+d. $H_0: \hat{p}_t = \hat{p}_c \text{ vs. }H_a: \hat{p}_t < \hat{p}_c$
+e. $H_0: \hat{p}_t = \hat{p}_c \text{ vs. }H_a: \hat{p}_t > \hat{p}_c$
+f. $H_0: \hat{p}_t = \hat{p}_c \text{ vs. }H_a: \hat{p}_t \neq \hat{p}_c$
+
+## Exercise 2 
+
+Let's use the data from the *Mythbusters* episode and simulation-based inference in R to test this claim. Based on their experiment, do yawning and seeing someone yawn appear to be dependent?
+
+Evaluate this question using a simulation based approach. We will use the same null and alternative hypotheses as before. The data from *Mythbusters* is available in the `yawn` data frame. 
+
+- Fill in the code below to generate the null distribution. Uncomment the code once it is complete.
+
+```{r mythbusters-null}
+set.seed(101821)
+#null_dist <- yawn %>%
+#  specify(response = ____, explanatory = _____, success = "yawn") %>%
+#  hypothesize(null = "______") %>%
+#  generate(100, type = "permute") %>%
+#  calculate(stat = "______", 
+#            order = c("trmt", "ctrl"))
+```
+
+- Visualize the null distribution and shade in the area used to calculate the p-value. 
+
+```{r mythbusters-null-viz}
+# add code 
+```
+
+- Calculate p-value. Then use the p-value to make your conclusion using a significance level of 0.1.
+
+```{r mythbusters-calc-p-value}
+# add code
+```
+
+## Exercise 3: Confidence interval
+
+Construct a 90% confidence interval for the difference in proportion of
+yawners between those who see someone else yawn and those who don't.
+
+```{r}
+#boot_dist <- yawn %>%
+  #specify(response = ______, explanatory = ______, success = "yawn") %>%
+ # generate(100, type = "bootstrap") %>%
+ # calculate(stat = "______", 
+ #           order = c("trmt", "ctrl"))
+```
+
+-   Why are we using "bootstrap" instead of "permute" here?
+
+```{r}
+# calculate the lower and upper bounds for the 90% ci
+#boot_dist %>%
+ # summarise(lower = quantile(stat, ___),
+ #          upper = quantile(stat, ___))
+```
+
+-   Interpret the interval in the context of the data.
+
+-   Suppose you use the confidence interval to evaluate the hypotheses
+    in Exercise 2. Is the conclusion drawn from the confidence     interval consistent with the conclusion from the the hypothesis test?
+
+## Exercise 4
+
+Do you buy the conclusions from this experiment? Why or why not? 
+
+
+[^1]: This question was adapted from [*Introduction to Modern Statistics*](https://openintro-ims.netlify.app/).
+[^2]: Simulation activity from [Data science in a box](https://datasciencebox.org/)
